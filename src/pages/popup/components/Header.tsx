@@ -2,8 +2,8 @@ import React from "react";
 
 const Header = () => {
   return (
-    <div className="border-b-[1px] mb-1">
-      <p className="text-2xl text-white text-center">super</p>
+    <div>
+      <p className="pt-3 pb-5 font-bold text-3xl text-center">⚡Super⚡</p>
     </div>
   );
 };
