@@ -1,4 +1,5 @@
 import React from "react";
+import getQuery from "../utils/getQuery";
 
 const Settings = () => {
   const [preferences, setPreferences] = React.useState({
@@ -18,23 +19,43 @@ const Settings = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    const query =
-      `
-You are a teaching wizard, experienced at helping students understand the content they are learning in a personalized manner. Your knowledge is both wide and deep. 
+  const handleSubmit = () => {
+    const messageId = Math.floor(Math.random() * 1000000000);
 
-Here are the preferences of your student -
-    ` +
-      getPreferencesText(preferences) +
-      `
-    
-Now, let's create a personalized lesson plan for your student.
-    `;
+    // save the preferences and messageIdto chrome storage
+    chrome.storage.local.set({
+      preferences,
+      messageId,
+    });
 
+    // send the message to the content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id as number, { query });
+      chrome.tabs.sendMessage(tabs[0].id as number, {
+        action: "startLearning",
+        messageId,
+        preferences,
+      });
     });
   };
+
+  // chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  //   chrome.tabs.sendMessage(tabs[0].id as number, { query });
+  // });
+
+  // setTimeout(() => {}, 3000);
+
+  // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  //   chrome.tabs.sendMessage(
+  //     tabs[0].id,
+  //     {
+  //       action: "findElement",
+  //       searchText: messageId.toString(),
+  //     },
+  //     function (response) {
+  //       console.log({ response });
+  //     }
+  //   );
+  // });
 
   const {
     topic,
@@ -191,35 +212,14 @@ Now, let's create a personalized lesson plan for your student.
       </div>
 
       <button
-        className="border-2 border-solid border-black rounded-full mx-auto block px-5 py-2 bg-black text-white w-full"
+        /* add hover effect and also click effect */
+        className="border-2 border-solid border-black rounded-full mx-auto block px-5 py-2 bg-black text-white w-full mt-5 hover:bg-white hover:text-black hover:border-black transition-all duration-300 ease-in-out cursor-pointer"
         onClick={handleSubmit}
       >
         Start Learning
       </button>
     </>
   );
-};
-
-const getPreferencesText = (preferences) => {
-  const {
-    topic,
-    depth,
-    emojis,
-    communicationStyle,
-    learningStyle,
-    toneStyle,
-    reasoningFramework,
-  } = preferences;
-
-  return `
-Topic: ${topic}
-Depth: ${depth}
-Emojis: ${emojis}
-Communication Style: ${communicationStyle}
-Learning Style: ${learningStyle}
-Tone Style: ${toneStyle}
-Reasoning Framework: ${reasoningFramework}
-  `;
 };
 
 export default Settings;
