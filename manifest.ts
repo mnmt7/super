@@ -28,7 +28,7 @@ const manifest: chrome.runtime.ManifestV3 = {
       css: ["assets/css/contentStyle<KEY>.chunk.css"],
     },
   ],
-  permissions: ["tabs"],
+  permissions: ["tabs", "storage"],
 };
 
 export default manifest;
